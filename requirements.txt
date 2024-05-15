@@ -1,0 +1,24 @@
+# Core dependencies
+fastapi==0.110.0
+uvicorn==0.27.1
+python-multipart==0.0.9
+pydantic==2.6.3
+pydantic-settings==2.2.1
+python-dotenv==1.0.1
+sqlalchemy==2.0.27
+requests==2.31.0
+
+# Document processing
+pdf2image==1.17.0
+python-docx==1.1.0
+python-pptx==1.0.1
+openpyxl==3.1.2
+PyPDF2==3.0.1
+
+# Google Gemini API
+google-generativeai==0.3.2
+
+# Utilities
+pillow==10.2.0
+python-slugify==8.0.4
+markdown==3.5.2

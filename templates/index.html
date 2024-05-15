@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCP AI Document Analysis</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h3>MCP AI</h3>
+                <p>Document Chat</p>
+            </div>
+            <ul class="sidebar-menu">
+                <li class="active" data-section="upload-section">
+                    <i class="bi bi-cloud-upload"></i>
+                    <span>Upload</span>
+                </li>
+                <li data-section="documents-section">
+                    <i class="bi bi-file-earmark-text"></i>
+                    <span>Documents</span>
+                </li>
+                <li data-section="query-section">
+                    <i class="bi bi-chat-dots"></i>
+                    <span>Document Chat</span>
+                </li>
+            </ul>
+            <div class="sidebar-footer">
+                <p>Powered by Gemini 2.5 Pro</p>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="app-header">
+                <div class="header-left">
+                    <button id="sidebar-toggle" class="btn btn-icon">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <h1 id="section-title">Upload Documents</h1>
+                </div>
+                <div class="header-right">
+                    <div class="theme-toggle">
+                        <i class="bi bi-sun-fill"></i>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="theme-switch">
+                        </div>
+                        <i class="bi bi-moon-fill"></i>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Sections -->
+            <div class="content-container">
+                <!-- Upload Section -->
+                <div id="upload-section" class="content-section active">
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title">Upload Document</h5>
+                                    <!-- <p class="card-text">Upload your documents for AI-powered chat.</p>
+                                    <form id="upload-form" class="mt-4">
+                                        <div class="upload-area" id="drop-area">
+                                            <i class="bi bi-cloud-arrow-up-fill"></i>
+                                            <p>Drag & drop files here or click to browse</p>
+                                            <p class="text-muted">Files will be uploaded automatically</p>
+                                            <input type="file" id="file-input" class="file-input" accept=".pdf,.docx,.txt,.csv,.xlsx">
+                                        </div>
+                                    </form> -->
+                                </div>
+                                <div class="card-body">
+                                    <div id="drop-area" class="upload-area drop-area">
+                                        <i class="bi bi-cloud-arrow-up-fill"></i>
+                                        <!-- <i class="fa fa-cloud-upload-alt"></i> -->
+                                        <p>Drag & drop files here or click to browse</p>
+                                        <p class="text-muted">Supported formats: PDF, DOCX, PPTX, TXT, CSV, XLSX</p>
+                                        <input type="file" id="file-input" class="file-input" accept=".pdf,.docx,.pptx,.txt,.csv,.xlsx">
+                                        <div class="upload-progress" id="upload-progress">
+                                            <div class="upload-progress-bar" id="upload-progress-bar"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mt-4">
+                                        <h6>Or add document from URL</h6>
+                                        <form id="url-form" class="mt-3">
+                                            <div class="input-group">
+                                                <input type="url" id="url-input" class="form-control" placeholder="Enter URL to a document or webpage" required>
+                                                <button type="submit" class="btn btn-primary">Add URL</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title">Recent Uploads</h5>
+                                </div>
+                                <div class="card-body p-0">
+                                    <div id="recent-uploads-list" class="recent-uploads-list p-3">
+                                        <div class="text-center text-muted py-4">
+                                            <i class="fa fa-inbox mb-2" style="font-size: 2rem;"></i>
+                                            <p>No recent uploads</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Documents Section -->
+                <div id="documents-section" class="content-section">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="documents-header">
+                                <div class="search-container">
+                                    <i class="fa fa-search"></i>
+                                    <input type="text" id="document-search" class="form-control" placeholder="Search documents...">
+                                </div>
+                                <div class="filter-container">
+                                    <select id="document-filter" class="form-select">
+                                        <option value="all">All Documents</option>
+                                        <option value="uploaded">Uploaded</option>
+                                        <option value="analyzed">Analyzed</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Type</th>
+                                            <th>Size</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="documents-table-body">
+                                        <!-- Documents will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div id="documents-empty" class="text-center text-muted py-5">
+                                <i class="fa fa-file-alt mb-3" style="font-size: 3rem;"></i>
+                                <h5>No Documents Found</h5>
+                                <p>Upload documents to get started</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Query Section -->
+                <div id="query-section" class="content-section">
+                    <div class="query-layout">
+                        <!-- Document Selection Sidebar -->
+                        <div id="query-sidebar" class="query-sidebar">
+                            <div class="sidebar-header">
+                                <h5>Select Documents</h5>
+                                <button id="toggle-sidebar-btn" class="btn btn-sm btn-icon">
+                                    <i class="fa fa-chevron-left"></i>
+                                </button>
+                            </div>
+                            <div class="sidebar-content">
+                                <div class="document-selection">
+                                    <div id="document-selection-list">
+                                        <!-- Documents will be loaded here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Chat Main Area -->
+                        <div id="query-main" class="query-main">
+                            <div class="session-info-bar">
+                                <div id="selected-documents-info">No documents selected</div>
+                                <div class="d-flex">
+                                    <button id="toggle-sidebar-mobile-btn" class="btn btn-sm btn-icon d-lg-none">
+                                        <i class="fa fa-bars"></i>
+                                    </button>
+                                    <button id="clear-chat-btn" class="btn btn-sm btn-outline-secondary ms-2">
+                                        <i class="fa fa-trash-alt me-1"></i> Clear Chat
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="chat-container">
+                                <div id="chat-messages" class="chat-messages">
+                                    <!-- Messages will appear here -->
+                                </div>
+                                
+                                <form id="query-form" class="query-form">
+                                    <div class="input-group">
+                                        <input type="text" id="query-input" class="form-control" placeholder="Ask a question about the selected documents..." disabled>
+                                        <button type="submit" id="query-submit" class="btn btn-primary" disabled>
+                                            <i class="fa fa-paper-plane"></i>
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Document Viewer Modal -->
+                <div class="modal fade" id="document-viewer-modal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="document-viewer-title">Document Viewer</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div id="document-viewer-content"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Delete Confirmation Modal -->
+                <div class="modal fade" id="delete-confirm-modal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Confirm Delete</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Are you sure you want to delete this document? This action cannot be undone.</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="button" id="confirm-delete-btn" class="btn btn-danger">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Clear Chat Confirmation Modal -->
+                <div class="modal fade" id="clear-chat-modal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Clear Chat</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Are you sure you want to clear the current chat? This will remove all messages.</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="button" id="confirm-clear-chat-btn" class="btn btn-primary">Clear</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Loading Overlay -->
+                <div id="loading-overlay" class="loading-overlay">
+                    <div class="spinner-container">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p id="loading-text">Processing...</p>
+                    </div>
+                </div>
+
+                <!-- Toast Container -->
+                <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
+                    <div id="toast-container"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="toast-notification" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <i class="bi bi-info-circle me-2"></i>
+                <strong class="me-auto" id="toast-title">Notification</strong>
+                <small id="toast-time">Just now</small>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body" id="toast-message">
+                This is a notification message.
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="/static/js/main.js"></script>
+</body>
+</html>
